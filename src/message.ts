@@ -36,7 +36,8 @@ export interface UpdatedMessage extends BaseMessage {
 
 export interface ScriptsAddedMessage extends BaseMessage {
   type: typeof MessageType.ScriptsAdded;
-  scripts: Script[];
+  externalScripts: { src: string }[];
+  inlineScripts: { content: string }[];
 }
 
 export interface StylesheetsAddedMessage extends BaseMessage {
@@ -65,7 +66,18 @@ export const MessageFactory = {
   },
 
   scriptsAdded(scripts: Script[]): ScriptsAddedMessage {
-    return { type: MessageType.ScriptsAdded, scripts };
+    const externalScripts = scripts.filter(
+      (s): s is { src: string } => "src" in s,
+    );
+    const inlineScripts = scripts.filter(
+      (s): s is { content: string } => "content" in s,
+    );
+
+    return {
+      type: MessageType.ScriptsAdded,
+      externalScripts,
+      inlineScripts,
+    };
   },
 
   stylesheetsAdded(stylesheets: Stylesheet[]): StylesheetsAddedMessage {

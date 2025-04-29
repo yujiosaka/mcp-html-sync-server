@@ -29,9 +29,9 @@
       if (data.type === "update") {
         document.body.innerHTML = data.body;
       } else if (data.type === "scripts_added") {
-        updateScripts(data.scripts);
+        updateScripts(data);
       } else if (data.type === "stylesheets_added") {
-        updateStylesheets(data.stylesheets);
+        updateStylesheets(data);
       } else if (data.type === "expired") {
         showExpiredMessage(data.message);
       }
@@ -69,31 +69,35 @@
       const overlay = document.createElement("div");
       overlay.id = PAGE_EXPIRED_OVERLAY_ID;
 
-      const messageEl = document.createElement("h2");
-      messageEl.textContent = message;
+      const messageElement = document.createElement("h2");
+      messageElement.textContent = message;
 
-      overlay.appendChild(messageEl);
+      overlay.appendChild(messageElement);
       document.body.appendChild(overlay);
     }
   }
 
-  function updateScripts(scripts) {
-    for (const scriptData of scripts) {
-      const scriptElement = document.createElement("script");
-
-      if (scriptData.src) {
+  function updateScripts(data) {
+    if (data.externalScripts) {
+      for (const scriptData of data.externalScripts) {
+        const scriptElement = document.createElement("script");
         scriptElement.src = scriptData.src;
-      } else if (scriptData.content) {
-        scriptElement.textContent = scriptData.content;
+        document.head.appendChild(scriptElement);
       }
+    }
 
-      document.head.appendChild(scriptElement);
+    if (data.inlineScripts) {
+      for (const scriptData of data.inlineScripts) {
+        const scriptElement = document.createElement("script");
+        scriptElement.textContent = scriptData.content;
+        document.body.appendChild(scriptElement);
+      }
     }
   }
 
-  function updateStylesheets(stylesheets) {
-    for (const stylesheetData of stylesheets) {
-      if (stylesheetData.href) {
+  function updateStylesheets(data) {
+    if (data.stylesheets) {
+      for (const stylesheetData of data.stylesheets) {
         const linkElement = document.createElement("link");
         linkElement.rel = "stylesheet";
         linkElement.href = stylesheetData.href;
