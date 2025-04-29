@@ -65,7 +65,9 @@ export class PageManager {
 
     for (const connection of page.connections) {
       try {
-        connection.send(serializeMessage(MessageFactory.updated(body)));
+        connection.send(
+          serializeMessage(MessageFactory.updated(body, page.scripts)),
+        );
       } catch (err) {
         logger.error({ err }, "Error notifying client of page update");
       }

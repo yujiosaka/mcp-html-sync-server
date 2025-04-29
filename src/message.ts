@@ -32,6 +32,7 @@ export interface ExpiredMessage extends BaseMessage {
 export interface UpdatedMessage extends BaseMessage {
   type: typeof MessageType.Updated;
   body: string;
+  inlineScripts: { content: string }[];
 }
 
 export interface ScriptsAddedMessage extends BaseMessage {
@@ -61,8 +62,16 @@ export const MessageFactory = {
     return { type: MessageType.Expired, message: reason };
   },
 
-  updated(body: string): UpdatedMessage {
-    return { type: MessageType.Updated, body };
+  updated(body: string, scripts: Script[]): UpdatedMessage {
+    const inlineScripts = scripts.filter(
+      (s): s is { content: string } => "content" in s,
+    );
+
+    return {
+      type: MessageType.Updated,
+      body,
+      inlineScripts,
+    };
   },
 
   scriptsAdded(scripts: Script[]): ScriptsAddedMessage {

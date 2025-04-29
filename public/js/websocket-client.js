@@ -27,7 +27,7 @@
       }
 
       if (data.type === "updated") {
-        document.body.innerHTML = data.body;
+        updateBody(data);
       } else if (data.type === "scripts_added") {
         updateScripts(data);
       } else if (data.type === "stylesheets_added") {
@@ -77,32 +77,35 @@
     }
   }
 
+  function updateBody(data) {
+    const body =
+      data.body +
+      data.inlineScripts
+        .map((script) => `<script>${script.content}</script>`)
+        .join("\n");
+    document.body.innerHTML = body;
+  }
+
   function updateScripts(data) {
-    if (data.externalScripts) {
-      for (const scriptData of data.externalScripts) {
-        const scriptElement = document.createElement("script");
-        scriptElement.src = scriptData.src;
-        document.head.appendChild(scriptElement);
-      }
+    for (const scriptData of data.externalScripts) {
+      const scriptElement = document.createElement("script");
+      scriptElement.src = scriptData.src;
+      document.head.appendChild(scriptElement);
     }
 
-    if (data.inlineScripts) {
-      for (const scriptData of data.inlineScripts) {
-        const scriptElement = document.createElement("script");
-        scriptElement.textContent = scriptData.content;
-        document.body.appendChild(scriptElement);
-      }
+    for (const scriptData of data.inlineScripts) {
+      const scriptElement = document.createElement("script");
+      scriptElement.textContent = scriptData.content;
+      document.body.appendChild(scriptElement);
     }
   }
 
   function updateStylesheets(data) {
-    if (data.stylesheets) {
-      for (const stylesheetData of data.stylesheets) {
-        const linkElement = document.createElement("link");
-        linkElement.rel = "stylesheet";
-        linkElement.href = stylesheetData.href;
-        document.head.appendChild(linkElement);
-      }
+    for (const stylesheetData of data.stylesheets) {
+      const linkElement = document.createElement("link");
+      linkElement.rel = "stylesheet";
+      linkElement.href = stylesheetData.href;
+      document.head.appendChild(linkElement);
     }
   }
 
