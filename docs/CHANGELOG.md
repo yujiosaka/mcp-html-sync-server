@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.1...v1.0.2) (2025-04-29)
+
+
+### Bug Fixes
+
+* make docker build to succeed ([db1a835](https://github.com/yujiosaka/mcp-html-sync-server/commit/db1a835e5419c515648c8f4d407ecd26c2a3c770))
+
 ## [1.0.1](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.0...v1.0.1) (2025-04-29)
 
 
