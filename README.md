@@ -6,7 +6,7 @@ A real-time HTML syncing server with hot reload capabilities, built using the Mo
 
 ## Features
 
-<img src="https://github.com/user-attachments/assets/16cda291-468f-4f57-b1c5-56e0fa4ff137" alt="MCP HTML Sync Server" width="300" align="right">
+<img src="https://github.com/user-attachments/assets/7dd50f5e-958d-4c09-8a6f-462a50bbd98e" alt="MCP HTML Sync Server" width="300" align="right">
 
 - **Real-time HTML Syncing**: Create and update HTML content with instant updates to all connected clients
 - **WebSocket Hot Reload**: All connected browsers automatically refresh when content changes
