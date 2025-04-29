@@ -9,14 +9,15 @@ export type RequestType = (typeof RequestType)[keyof typeof RequestType];
 
 export const RequestDescription = {
   CreatePage:
-    "Create a new page with HTML body content (without body tags). Returns a URL that can be shown to the user and a page ID that can be saved for future updates.",
+    "Create a new page with HTML body content (DO NOT include <script> tags in body - use scripts parameter instead). Returns a URL and page ID for future updates.",
   UpdatePage:
-    "Update an existing page with new HTML body content (without body tags). Recommended for modifying existing content instead of creating a new page. Requires the page ID from a previous create_page call. This will extend the page's expiration time.",
-  DestroyPage: "Remove a page by ID",
+    "Update an existing page with new HTML body content (DO NOT include <script> tags in body - use add_scripts function instead). Requires the page ID from a previous create_page call. This will extend the page's expiration time.",
+  DestroyPage:
+    "Remove a page by ID. This permanently deletes the page and all associated content (HTML, scripts, stylesheets). This action cannot be undone.",
   AddScripts:
-    "Add JavaScript scripts to an existing page. This will extend the page's expiration time.",
+    "Add JavaScript scripts to an existing page. This is the CORRECT way to add or update scripts after page creation. This will extend the page's expiration time.",
   AddStylesheets:
-    "Add CSS stylesheets to an existing page. This will extend the page's expiration time.",
+    "Add CSS stylesheets to an existing page. This is the CORRECT way to add or update styles after page creation. This will extend the page's expiration time.",
 } as const;
 export type RequestDescription =
   (typeof RequestDescription)[keyof typeof RequestDescription];
@@ -27,23 +28,27 @@ export const RequestSchema = {
     properties: {
       body: {
         type: "string",
-        description: "HTML content for the page body (only the inner content)",
+        description:
+          "HTML content for the page body (ONLY the inner content, NO <script> tags here)",
       },
       scripts: {
         type: "array",
         description:
-          "Optional array of JavaScript scripts to include in the page",
+          "Optional array of JavaScript scripts to include in the page. Each script must have EITHER src OR content property.",
         items: {
           type: "object",
-          description: "Either src or content must be provided",
+          description:
+            "Script object with either src property (for external scripts) OR content property (for inline scripts)",
           properties: {
             src: {
               type: "string",
-              description: "URL for external script",
+              description:
+                "URL for external script (e.g., https://cdn.example.com/script.js)",
             },
             content: {
               type: "string",
-              description: "Content for inline script",
+              description:
+                "Content for inline script (JavaScript code without <script> tags)",
             },
           },
           oneOf: [{ required: ["src"] }, { required: ["content"] }],
@@ -54,11 +59,12 @@ export const RequestSchema = {
         description: "Optional array of CSS stylesheets to include in the page",
         items: {
           type: "object",
-          description: "Stylesheet with href property",
+          description: "Stylesheet object with href property",
           properties: {
             href: {
               type: "string",
-              description: "URL for external stylesheet",
+              description:
+                "URL for external stylesheet (e.g., https://cdn.example.com/style.css)",
             },
           },
           required: ["href"],
@@ -72,12 +78,13 @@ export const RequestSchema = {
     properties: {
       id: {
         type: "string",
-        description: "ID of the page to update",
+        description:
+          "ID of the page to update (obtained from the create_page response)",
       },
       body: {
         type: "string",
         description:
-          "New HTML content for the page body (only the inner content)",
+          "New HTML content for the page body (ONLY the inner content, NO <script> tags here)",
       },
     },
     required: ["id", "body"],
@@ -87,7 +94,8 @@ export const RequestSchema = {
     properties: {
       id: {
         type: "string",
-        description: "ID of the page to destroy",
+        description:
+          "ID of the page to destroy (obtained from a previous create_page response)",
       },
     },
     required: ["id"],
@@ -97,22 +105,27 @@ export const RequestSchema = {
     properties: {
       id: {
         type: "string",
-        description: "ID of the page to add scripts to",
+        description:
+          "ID of the page to add scripts to (obtained from a previous create_page response)",
       },
       scripts: {
         type: "array",
-        description: "Array of JavaScript scripts to add to the page",
+        description:
+          "Array of JavaScript scripts to add to the page. Each script must have EITHER src OR content property.",
         items: {
           type: "object",
-          description: "Either src or content must be provided",
+          description:
+            "Script object with either src property (for external scripts) OR content property (for inline scripts)",
           properties: {
             src: {
               type: "string",
-              description: "URL for external script",
+              description:
+                "URL for external script (e.g., https://cdn.example.com/script.js)",
             },
             content: {
               type: "string",
-              description: "Content for inline script",
+              description:
+                "Content for inline script (JavaScript code without <script> tags)",
             },
           },
           oneOf: [{ required: ["src"] }, { required: ["content"] }],
@@ -126,18 +139,22 @@ export const RequestSchema = {
     properties: {
       id: {
         type: "string",
-        description: "ID of the page to add stylesheets to",
+        description:
+          "ID of the page to add stylesheets to (obtained from a previous create_page response)",
       },
       stylesheets: {
         type: "array",
-        description: "Array of CSS stylesheets to add to the page",
+        description:
+          "Array of CSS stylesheets to add to the page. Each stylesheet must have the href property.",
         items: {
           type: "object",
-          description: "Stylesheet with href property",
+          description:
+            "Stylesheet object with href property for external CSS file",
           properties: {
             href: {
               type: "string",
-              description: "URL for external stylesheet",
+              description:
+                "URL for external stylesheet (e.g., https://cdn.example.com/styles.css)",
             },
           },
           required: ["href"],
