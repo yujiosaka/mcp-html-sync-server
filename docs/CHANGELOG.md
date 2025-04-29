@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.5...v1.0.6) (2025-04-29)
+
+
+### Bug Fixes
+
+* separate binding and access url ([aa5020b](https://github.com/yujiosaka/mcp-html-sync-server/commit/aa5020be59ff2c3201a7d80180ade60590818a5e))
+
 ## [1.0.5](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.4...v1.0.5) (2025-04-29)
 
 
