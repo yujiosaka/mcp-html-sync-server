@@ -1,3 +1,11 @@
+## [1.0.8](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.7...v1.0.8) (2025-04-29)
+
+
+### Bug Fixes
+
+* corret base url in .env.example ([46ada1c](https://github.com/yujiosaka/mcp-html-sync-server/commit/46ada1ca4b94246f61ad98f95aa9526fe4eeef75))
+* prevent scripts to be triggered before body tag is created ([1e67b4b](https://github.com/yujiosaka/mcp-html-sync-server/commit/1e67b4b8c75d623e59cb564d48360b6f1c393dd9))
+
 ## [1.0.7](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.6...v1.0.7) (2025-04-29)
 
 
