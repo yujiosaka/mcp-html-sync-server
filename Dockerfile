@@ -37,7 +37,7 @@ WORKDIR /app
 COPY --from=development /app/dist ./dist
 COPY --from=development /app/public ./public
 COPY --from=development /app/templates ./templates
-COPY --from=development /app/package.json /app/bun.lock ./
+COPY --from=development /app/package.json /app/bun.lock .env ./
 
 # Install dependencies
 RUN bun install --production --ignore-scripts
@@ -46,4 +46,4 @@ RUN bun install --production --ignore-scripts
 ENV NODE_ENV=production
 
 # Start the server
-CMD ["bun", "dist/index.js"]
+CMD ["bun", "dist/server.js"]
