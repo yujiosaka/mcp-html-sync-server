@@ -31,7 +31,9 @@ test("returns 404 and renders not-found template when page doesn't exist", async
 test("renders page template with content when page exists", async () => {
   const id = "existing-id";
   const body = "<div>Test content</div>";
-  const scripts = [{ src: "https://example.com/script.js" }];
+  const externalScripts = [{ src: "https://example.com/script.js" }];
+  const inlineScripts = [{ content: "console.log('Test');" }];
+  const scripts = [...externalScripts, ...inlineScripts];
   const stylesheets = [{ href: "https://example.com/style.css" }];
   const page = {
     id,
@@ -52,7 +54,8 @@ test("renders page template with content when page exists", async () => {
     expect.objectContaining({
       id,
       body,
-      scripts,
+      externalScripts,
+      inlineScripts,
       stylesheets,
     }),
   );

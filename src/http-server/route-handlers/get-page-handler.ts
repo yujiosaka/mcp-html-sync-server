@@ -11,10 +11,14 @@ export default async function getPageHandler(
   const page = pageManager.getPage(params.id);
   if (!page) return reply.code(404).view("not-found.hbs", { id: params.id });
 
+  const externalScripts = page.scripts.filter((script) => script.src);
+  const inlineScripts = page.scripts.filter((script) => script.content);
+
   return reply.view("page.hbs", {
     id: params.id,
     body: page.body,
-    scripts: page.scripts,
     stylesheets: page.stylesheets,
+    externalScripts,
+    inlineScripts,
   });
 }

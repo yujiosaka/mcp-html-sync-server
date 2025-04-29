@@ -9,15 +9,14 @@
     {{#each stylesheets}}
       <link rel="stylesheet" href="{{this.href}}">
     {{/each}}
-    {{#each scripts}}
-      {{#if this.src}}
-        <script src="{{this.src}}"></script>
-      {{else if this.content}}
-        <script>{{{this.content}}}</script>
-      {{/if}}
+    {{#each externalScripts}}
+      <script src="{{this.src}}"></script>
     {{/each}}
   </head>
   <body>
     {{{body}}}
+    {{#each inlineScripts}}
+      <script>{{{this.content}}}</script>
+    {{/each}}
   </body>
 </html>
