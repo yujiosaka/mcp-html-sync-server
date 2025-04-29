@@ -1,3 +1,11 @@
+## [1.0.9](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.8...v1.0.9) (2025-04-29)
+
+
+### Bug Fixes
+
+* prevent inline scripts to disappear on page update ([d62968a](https://github.com/yujiosaka/mcp-html-sync-server/commit/d62968a2b23c7c035484f009cbd8ae1d37c82a55))
+* prevent update event sent twice to clients ([67760ab](https://github.com/yujiosaka/mcp-html-sync-server/commit/67760ab2f1d45f3aa7d856348d97dacf826782a0))
+
 ## [1.0.8](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.7...v1.0.8) (2025-04-29)
 
 
