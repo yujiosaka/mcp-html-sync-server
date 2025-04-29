@@ -1,6 +1,6 @@
 {
   "name": "mcp-html-sync-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A real-time HTML syncing server with hot reload capabilities, built using the Model Context Protocol (MCP)",
   "type": "module",
   "main": "dist/index.js",
