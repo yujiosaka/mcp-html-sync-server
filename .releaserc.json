@@ -1,0 +1,33 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "docs/CHANGELOG.md"
+      }
+    ],
+    "@semantic-release/npm",
+    "@semantic-release/github",
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "src/mcp-server/index.ts",
+          "docs/CHANGELOG.md",
+          "package.json",
+          "bun.lockb"
+        ]
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "sed -i.bak -E 's/(version: \")[0-9]+\\.[0-9]+\\.[0-9]+/\\1${nextRelease.version}/g' src/mcp-server/index.ts && rm -f src/mcp-server/index.ts.bak",
+        "successCmd": "echo 'nextVer=${nextRelease.version}' >> $GITHUB_OUTPUT"
+      }
+    ]
+  ]
+}

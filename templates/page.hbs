@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Sync - {{id}}</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/websocket-client.js"></script>
+    {{#each stylesheets}}
+      <link rel="stylesheet" href="{{this.href}}">
+    {{/each}}
+    {{#each scripts}}
+      {{#if this.src}}
+        <script src="{{this.src}}"></script>
+      {{else if this.content}}
+        <script>{{{this.content}}}</script>
+      {{/if}}
+    {{/each}}
+  </head>
+  <body>
+    {{{body}}}
+  </body>
+</html>
