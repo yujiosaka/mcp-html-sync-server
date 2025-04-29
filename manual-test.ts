@@ -57,6 +57,10 @@ try {
     {
       src: "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js",
     },
+    {
+      content:
+        "confetti({ particleCount: 200, spread: 120, origin: { y: 0.6 } });",
+    },
   ];
   const initialStylesheets = [
     {
