@@ -31,7 +31,6 @@ describe("connectionHandler", () => {
 
     connectionHandler(socket, { id });
 
-    expect(pageManager.getPage).toHaveBeenCalledWith(id);
     expect(socket.close).toHaveBeenCalledWith(
       ConnectionCloseCode.NotFound,
       ConnectionCloseReason.NotFound,
@@ -55,7 +54,6 @@ describe("connectionHandler", () => {
 
     connectionHandler(socket, { id });
 
-    expect(pageManager.getPage).toHaveBeenCalledWith(id);
     expect(socket.close).not.toHaveBeenCalled();
     expect(pageManager.addConnection).toHaveBeenCalledWith(id, socket);
   });

@@ -29,14 +29,27 @@ export default async function updatePageHandler(request: CallToolRequest) {
         logger.error({ err }, "Error sending update to client");
       }
     }
-    const viewUrl = `http://${env.SERVER_HOST}:${env.SERVER_PORT}/${id}`;
+    const url = `${env.BASE_URL}${id}`;
     return {
       content: [
         {
           type: "text",
-          text: `Page updated successfully!\nID: ${id}\nURL: ${viewUrl}\nExpires: ${page.expiresAt.toISOString()}`,
+          text: "Page updated successfully! A URL is provided below to view your updated page.",
+        },
+        {
+          type: "text",
+          text: `View your HTML page in URL: ${url}`,
+        },
+        {
+          type: "text",
+          text: `ID: ${id}\nExpires at: ${page.expiresAt.toISOString()}\n\nUse this ID for future updates before expiration.`,
         },
       ],
+      metadata: {
+        id: id,
+        url,
+        expires_at: page.expiresAt.toISOString(),
+      },
     };
   } catch (err) {
     return {

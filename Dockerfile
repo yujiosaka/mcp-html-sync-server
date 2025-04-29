@@ -42,8 +42,8 @@ COPY --from=development /app/package.json /app/bun.lock ./
 # Install dependencies
 RUN bun install --production --ignore-scripts
 
-# Set NODE_ENV to production for integration
 ENV NODE_ENV=production
+ENV SERVER_HOST=0.0.0.0
 
 # Start the server
 CMD ["bun", "dist/server.js"]

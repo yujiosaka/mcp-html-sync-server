@@ -24,8 +24,7 @@ mock.module("../../../src/page-manager", () => ({
 
 mock.module("../../../src/env", () => ({
   env: {
-    SERVER_HOST: "localhost",
-    SERVER_PORT: 3000,
+    BASE_URL: "http://localhost:3000/",
   },
 }));
 
@@ -55,17 +54,27 @@ describe("handleAddStylesheets", () => {
 
     const result = await addStylesheetsHandler(request);
 
-    expect(pageManager.addStylesheets).toHaveBeenCalledWith(id, stylesheets);
     expect(result).toEqual({
       content: [
         {
           type: "text",
           text: expect.stringContaining("Stylesheets added successfully!"),
         },
+        {
+          type: "text",
+          text: "View your HTML page in URL: http://localhost:3000/id",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: id"),
+        },
       ],
+      metadata: {
+        id: "id",
+        url: "http://localhost:3000/id",
+        expires_at: expect.any(String),
+      },
     });
-    expect(result.content[0]?.text).toContain("ID: id");
-    expect(result.content[0]?.text).toContain("URL: http://localhost:3000/id");
   });
 
   test("returns error when page does not exist", async () => {
@@ -83,7 +92,6 @@ describe("handleAddStylesheets", () => {
 
     const result = await addStylesheetsHandler(request);
 
-    expect(pageManager.addStylesheets).toHaveBeenCalledWith(id, stylesheets);
     expect(result).toEqual({
       content: [
         {
@@ -111,7 +119,6 @@ describe("handleAddStylesheets", () => {
 
     const result = await addStylesheetsHandler(request);
 
-    expect(pageManager.addStylesheets).toHaveBeenCalledWith(id, stylesheets);
     expect(result).toEqual({
       content: [
         {

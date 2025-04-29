@@ -8,6 +8,11 @@ interface ToolResponse {
     type: string;
     text: string;
   }>;
+  metadata?: {
+    id?: string;
+    url?: string;
+    expires_at?: string;
+  };
   isError?: boolean;
 }
 
@@ -69,9 +74,13 @@ try {
   })) as ToolResponse;
   displayResponse(createResult);
 
-  const responseText = createResult.content[0]?.text;
-  const id = responseText?.match(/ID: ([a-zA-Z0-9_-]+)/)?.[1] ?? null;
-  if (!id) throw new Error("Failed to extract page ID. Exiting test.");
+  const id = createResult.metadata?.id;
+  const url = createResult.metadata?.url;
+  if (!id)
+    throw new Error("Failed to extract page ID from metadata. Exiting test.");
+
+  console.log(`Page created with ID: ${id}`);
+  console.log(`Page URL: ${url}`);
 
   await waitForConfirmation("\nStep 2: Ready to update the page?");
 

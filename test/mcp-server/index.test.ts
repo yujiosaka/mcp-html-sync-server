@@ -1,18 +1,28 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { mcpServer } from "../../src/mcp-server/index.js";
 import { RequestType } from "../../src/mcp-server/scheme.js";
 import { pageManager } from "../../src/page-manager.js";
-import type { Script } from "../../src/page.js";
 
 interface ToolResponse {
   content: Array<{
     type: string;
     text: string;
   }>;
+  metadata?: {
+    id: string;
+    url: string;
+    expires_at: string;
+  };
   isError?: boolean;
 }
+
+mock.module("../../src/env", () => ({
+  env: {
+    BASE_URL: "http://localhost:3000/",
+  },
+}));
 
 let client: Client;
 
@@ -46,17 +56,27 @@ describe("create_page", () => {
       content: [
         {
           type: "text",
-          text: expect.stringContaining("Page created successfully"),
+          text: "Page created successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "View your HTML page in URL: http://localhost:3000/",
+          ),
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: "),
         },
       ],
+      metadata: expect.objectContaining({
+        id: expect.any(String),
+        url: expect.stringContaining("http://localhost:3000/"),
+        expires_at: expect.any(String),
+      }),
     });
 
-    const responseText = result.content[0]?.text;
-    if (!responseText) throw new Error("Response text is undefined");
-
-    const idMatch = responseText.match(/ID: ([a-zA-Z0-9_-]+)/);
-    const id = idMatch?.[1];
-    if (!id) throw new Error("Page ID is not found");
+    const id = result.metadata?.id as string;
 
     const page = pageManager.getPage(id);
     expect(page).not.toBeNull();
@@ -78,17 +98,27 @@ describe("create_page", () => {
       content: [
         {
           type: "text",
-          text: expect.stringContaining("Page created successfully"),
+          text: "Page created successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "View your HTML page in URL: http://localhost:3000/",
+          ),
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: "),
         },
       ],
+      metadata: expect.objectContaining({
+        id: expect.any(String),
+        url: expect.stringContaining("http://localhost:3000/"),
+        expires_at: expect.any(String),
+      }),
     });
 
-    const responseText = result.content[0]?.text;
-    if (!responseText) throw new Error("Response text is undefined");
-
-    const idMatch = responseText.match(/ID: ([a-zA-Z0-9_-]+)/);
-    const id = idMatch?.[1];
-    if (!id) throw new Error("Page ID is not found");
+    const id = result.metadata?.id as string;
 
     const page = pageManager.getPage(id);
     expect(page).not.toBeNull();
@@ -104,12 +134,7 @@ describe("update_page", () => {
       arguments: { body: "<h1>Original Content</h1>" },
     })) as ToolResponse;
 
-    const createResponseText = createResult.content[0]?.text;
-    if (!createResponseText) throw new Error("Response text is undefined");
-
-    const idMatch = createResponseText.match(/ID: ([a-zA-Z0-9_-]+)/);
-    const id = idMatch?.[1];
-    if (!id) throw new Error("Page ID is not found");
+    const id = createResult.metadata?.id as string;
 
     const updateResult = (await client.callTool({
       name: RequestType.UpdatePage,
@@ -120,9 +145,24 @@ describe("update_page", () => {
       content: [
         {
           type: "text",
-          text: expect.stringContaining("Page updated successfully"),
+          text: "Page updated successfully! A URL is provided below to view your updated page.",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "View your HTML page in URL: http://localhost:3000/",
+          ),
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: "),
         },
       ],
+      metadata: expect.objectContaining({
+        id: expect.any(String),
+        url: expect.stringContaining("http://localhost:3000/"),
+        expires_at: expect.any(String),
+      }),
     });
 
     const page = pageManager.getPage(id);
@@ -136,10 +176,17 @@ describe("update_page", () => {
       arguments: { id: "non-existent-id", body: "<h1>New Content</h1>" },
     })) as ToolResponse;
 
-    expect(updateResult.isError).toBeTruthy();
-    expect(updateResult.content[0]?.text).toContain(
-      "Error updating page: Page not found: non-existent-id",
-    );
+    expect(updateResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "Error updating page: Page not found: non-existent-id",
+          ),
+        },
+      ],
+      isError: true,
+    });
 
     const page = pageManager.getPage("non-existent-id");
     expect(page).toBeNull();
@@ -151,12 +198,7 @@ describe("update_page", () => {
       arguments: { body: "<h1>Original Content</h1>" },
     })) as ToolResponse;
 
-    const createResponseText = createResult.content[0]?.text;
-    if (!createResponseText) throw new Error("Response text is undefined");
-
-    const idMatch = createResponseText.match(/ID: ([a-zA-Z0-9_-]+)/);
-    const id = idMatch?.[1];
-    if (!id) throw new Error("Page ID is not found");
+    const id = createResult.metadata?.id as string;
 
     pageManager.removePage(id);
 
@@ -167,10 +209,17 @@ describe("update_page", () => {
       arguments: { id, body: "<h1>Recreated Content</h1>" },
     })) as ToolResponse;
 
-    expect(updateResult.isError).toBeTruthy();
-    expect(updateResult.content[0]?.text).toContain(
-      `Error updating page: Page not found: ${id}`,
-    );
+    expect(updateResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: expect.stringContaining(
+            `Error updating page: Page not found: ${id}`,
+          ),
+        },
+      ],
+      isError: true,
+    });
 
     const page = pageManager.getPage(id);
     expect(page).toBeNull();
@@ -184,12 +233,7 @@ describe("destroy_page", () => {
       arguments: { body: "<h1>Test Page</h1>" },
     })) as ToolResponse;
 
-    const createResponseText = createResult.content[0]?.text;
-    if (!createResponseText) throw new Error("Response text is undefined");
-
-    const idMatch = createResponseText.match(/ID: ([a-zA-Z0-9_-]+)/);
-    const id = idMatch?.[1];
-    if (!id) throw new Error("Page ID is not found");
+    const id = createResult.metadata?.id as string;
 
     const destroyResult = (await client.callTool({
       name: RequestType.DestroyPage,
@@ -217,8 +261,14 @@ describe("destroy_page", () => {
       },
     })) as ToolResponse;
 
-    expect(destroyResult.isError).toBeFalsy();
-    expect(destroyResult.content[0]?.text).toContain("destroyed successfully");
+    expect(destroyResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: expect.stringContaining("destroyed successfully"),
+        },
+      ],
+    });
   });
 });
 
@@ -229,12 +279,7 @@ describe("add_scripts", () => {
       arguments: { body: "<div>Test Page</div>" },
     })) as ToolResponse;
 
-    const createResponseText = createResult.content[0]?.text;
-    if (!createResponseText) throw new Error("Response text is undefined");
-
-    const idMatch = createResponseText.match(/ID: ([a-zA-Z0-9_-]+)/);
-    const id = idMatch?.[1];
-    if (!id) throw new Error("Page ID is not found");
+    const id = createResult.metadata?.id as string;
 
     const scripts = [
       { src: "https://example.com/script.js" },
@@ -250,9 +295,24 @@ describe("add_scripts", () => {
       content: [
         {
           type: "text",
-          text: expect.stringContaining("Scripts added successfully"),
+          text: "Scripts added successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "View your HTML page in URL: http://localhost:3000/",
+          ),
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: "),
         },
       ],
+      metadata: expect.objectContaining({
+        id: expect.any(String),
+        url: expect.stringContaining("http://localhost:3000/"),
+        expires_at: expect.any(String),
+      }),
     });
 
     const page = pageManager.getPage(id);
@@ -268,8 +328,15 @@ describe("add_scripts", () => {
       arguments: { id: "non-existent-id", scripts },
     })) as ToolResponse;
 
-    expect(addScriptsResult.isError).toBe(true);
-    expect(addScriptsResult.content[0]?.text).toContain("not found");
+    expect(addScriptsResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: expect.stringContaining("not found"),
+        },
+      ],
+      isError: true,
+    });
   });
 
   test("adds scripts to a page with existing scripts", async () => {
@@ -283,12 +350,7 @@ describe("add_scripts", () => {
       },
     })) as ToolResponse;
 
-    const createResponseText = createResult.content[0]?.text;
-    if (!createResponseText) throw new Error("Response text is undefined");
-
-    const idMatch = createResponseText.match(/ID: ([a-zA-Z0-9_-]+)/);
-    const id = idMatch?.[1];
-    if (!id) throw new Error("Page ID is not found");
+    const id = createResult.metadata?.id as string;
 
     let page = pageManager.getPage(id);
     expect(page).not.toBeNull();
@@ -303,13 +365,157 @@ describe("add_scripts", () => {
       arguments: { id, scripts: additionalScripts },
     })) as ToolResponse;
 
-    expect(addScriptsResult.isError).toBeFalsy();
-    expect(addScriptsResult.content[0]?.text).toContain(
-      "Scripts added successfully",
-    );
+    expect(addScriptsResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: "Scripts added successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "View your HTML page in URL: http://localhost:3000/",
+          ),
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: "),
+        },
+      ],
+      metadata: expect.objectContaining({
+        id: expect.any(String),
+        url: expect.stringContaining("http://localhost:3000/"),
+        expires_at: expect.any(String),
+      }),
+    });
 
     page = pageManager.getPage(id);
     expect(page).not.toBeNull();
     expect(page?.scripts).toEqual([...initialScripts, ...additionalScripts]);
+  });
+});
+
+describe("add_stylesheets", () => {
+  test("adds stylesheets to an existing page", async () => {
+    const createResult = (await client.callTool({
+      name: RequestType.CreatePage,
+      arguments: { body: "<div>Test Page</div>" },
+    })) as ToolResponse;
+
+    const id = createResult.metadata?.id as string;
+
+    const stylesheets = [{ href: "https://example.com/style.css" }];
+
+    const addStylesheetsResult = (await client.callTool({
+      name: RequestType.AddStylesheets,
+      arguments: { id, stylesheets },
+    })) as ToolResponse;
+
+    expect(addStylesheetsResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: "Stylesheets added successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "View your HTML page in URL: http://localhost:3000/",
+          ),
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: "),
+        },
+      ],
+      metadata: expect.objectContaining({
+        id: expect.any(String),
+        url: expect.stringContaining("http://localhost:3000/"),
+        expires_at: expect.any(String),
+      }),
+    });
+
+    const page = pageManager.getPage(id);
+    expect(page).not.toBeNull();
+    expect(page?.stylesheets).toEqual(stylesheets);
+  });
+
+  test("returns error when page does not exist", async () => {
+    const stylesheets = [{ href: "https://example.com/style.css" }];
+
+    const addStylesheetsResult = (await client.callTool({
+      name: RequestType.AddStylesheets,
+      arguments: { id: "non-existent-id", stylesheets },
+    })) as ToolResponse;
+
+    expect(addStylesheetsResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: expect.stringContaining("not found"),
+        },
+      ],
+      isError: true,
+    });
+  });
+
+  test("adds stylesheets to a page with existing stylesheets", async () => {
+    const initialStylesheets = [
+      { href: "https://example.com/initial-style.css" },
+    ];
+
+    const createResult = (await client.callTool({
+      name: RequestType.CreatePage,
+      arguments: {
+        body: "<div>Test Page with Stylesheets</div>",
+        stylesheets: initialStylesheets,
+      },
+    })) as ToolResponse;
+
+    const id = createResult.metadata?.id as string;
+
+    let page = pageManager.getPage(id);
+    expect(page).not.toBeNull();
+    expect(page?.stylesheets).toEqual(initialStylesheets);
+
+    const additionalStylesheets = [
+      { href: "https://example.com/additional-style.css" },
+    ];
+
+    const addStylesheetsResult = (await client.callTool({
+      name: RequestType.AddStylesheets,
+      arguments: { id, stylesheets: additionalStylesheets },
+    })) as ToolResponse;
+
+    expect(addStylesheetsResult).toEqual({
+      content: [
+        {
+          type: "text",
+          text: "Stylesheets added successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining(
+            "View your HTML page in URL: http://localhost:3000/",
+          ),
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: "),
+        },
+      ],
+      metadata: expect.objectContaining({
+        id: expect.any(String),
+        url: expect.stringContaining("http://localhost:3000/"),
+        expires_at: expect.any(String),
+      }),
+    });
+
+    page = pageManager.getPage(id);
+    expect(page).not.toBeNull();
+    expect(page?.stylesheets).toEqual([
+      ...initialStylesheets,
+      ...additionalStylesheets,
+    ]);
   });
 });

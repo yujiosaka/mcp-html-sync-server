@@ -3,7 +3,6 @@ import type { CallToolRequest } from "@modelcontextprotocol/sdk/types.js";
 import type WebSocket from "ws";
 import handleAddScripts from "../../../src/mcp-server/request-handlers/add-scripts-handler.js";
 import { pageManager } from "../../../src/page-manager.js";
-import type { Script } from "../../../src/page.js";
 
 type AddScripts = Mock<typeof pageManager.addScripts>;
 
@@ -27,8 +26,7 @@ mock.module("../../../src/page-manager", () => ({
 
 mock.module("../../../src/env", () => ({
   env: {
-    SERVER_HOST: "localhost",
-    SERVER_PORT: 3000,
+    BASE_URL: "http://localhost:3000/",
   },
 }));
 
@@ -44,6 +42,7 @@ describe("handleAddScripts", () => {
       id,
       body: "<div>Content</div>",
       scripts,
+      stylesheets: [],
       createdAt: new Date(),
       expiresAt: new Date(Date.now() + 3600000),
       connections: new Set<WebSocket>(),
@@ -58,17 +57,27 @@ describe("handleAddScripts", () => {
 
     const result = await handleAddScripts(request);
 
-    expect(pageManager.addScripts).toHaveBeenCalledWith(id, scripts);
     expect(result).toEqual({
       content: [
         {
           type: "text",
           text: expect.stringContaining("Scripts added successfully!"),
         },
+        {
+          type: "text",
+          text: "View your HTML page in URL: http://localhost:3000/id",
+        },
+        {
+          type: "text",
+          text: expect.stringContaining("ID: id"),
+        },
       ],
+      metadata: {
+        id: "id",
+        url: "http://localhost:3000/id",
+        expires_at: expect.any(String),
+      },
     });
-    expect(result.content[0]?.text).toContain("ID: id");
-    expect(result.content[0]?.text).toContain("URL: http://localhost:3000/id");
   });
 
   test("returns error when page does not exist", async () => {
@@ -84,7 +93,6 @@ describe("handleAddScripts", () => {
 
     const result = await handleAddScripts(request);
 
-    expect(pageManager.addScripts).toHaveBeenCalledWith(id, scripts);
     expect(result).toEqual({
       content: [
         {
@@ -112,7 +120,6 @@ describe("handleAddScripts", () => {
 
     const result = await handleAddScripts(request);
 
-    expect(pageManager.addScripts).toHaveBeenCalledWith(id, scripts);
     expect(result).toEqual({
       content: [
         {

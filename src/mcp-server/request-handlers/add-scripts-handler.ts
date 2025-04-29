@@ -22,14 +22,27 @@ export default async function addScriptsHandler(request: CallToolRequest) {
       };
     }
 
-    const viewUrl = `http://${env.SERVER_HOST}:${env.SERVER_PORT}/${id}`;
+    const url = `${env.BASE_URL}${id}`;
     return {
       content: [
         {
           type: "text",
-          text: `Scripts added successfully!\nID: ${id}\nURL: ${viewUrl}\nExpires: ${page.expiresAt.toISOString()}`,
+          text: "Scripts added successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: `View your HTML page in URL: ${url}`,
+        },
+        {
+          type: "text",
+          text: `ID: ${id}\nExpires at: ${page.expiresAt.toISOString()}\n\nUse this ID for future updates before expiration.`,
         },
       ],
+      metadata: {
+        id: id,
+        url,
+        expires_at: page.expiresAt.toISOString(),
+      },
     };
   } catch (err) {
     logger.error({ err }, "Error adding scripts to page");

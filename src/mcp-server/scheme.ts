@@ -9,12 +9,14 @@ export type RequestType = (typeof RequestType)[keyof typeof RequestType];
 
 export const RequestDescription = {
   CreatePage:
-    "Create a new page with HTML body content (without body tags) and return a URL to view it",
+    "Create a new page with HTML body content (without body tags). Returns a URL that can be shown to the user and a page ID that can be saved for future updates.",
   UpdatePage:
-    "Update an existing page with new HTML body content (without body tags)",
+    "Update an existing page with new HTML body content (without body tags). Recommended for modifying existing content instead of creating a new page. Requires the page ID from a previous create_page call. This will extend the page's expiration time.",
   DestroyPage: "Remove a page by ID",
-  AddScripts: "Add JavaScript scripts to an existing page",
-  AddStylesheets: "Add CSS stylesheets to an existing page",
+  AddScripts:
+    "Add JavaScript scripts to an existing page. This will extend the page's expiration time.",
+  AddStylesheets:
+    "Add CSS stylesheets to an existing page. This will extend the page's expiration time.",
 } as const;
 export type RequestDescription =
   (typeof RequestDescription)[keyof typeof RequestDescription];

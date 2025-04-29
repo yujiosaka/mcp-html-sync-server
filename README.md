@@ -46,8 +46,8 @@ Instead of using an `.env` file, you can pass environment variables directly to 
 
 ```bash
 docker run -p 3000:3000 \
-  -e SERVER_HOST=localhost \
   -e SERVER_PORT=3000 \
+  -e BASE_URL=http://localhost:3000/ \
   -e PAGE_MAX_AGE=1h \
   -e PAGE_MAX_COUNT=1000 \
   yujiosaka/mcp-html-sync-server
@@ -83,10 +83,12 @@ bun run start
 Edit the `.env` file to configure the server:
 
 ```
-# Host address for the HTTP server (also used by MCP server for generating view URLs)
+# Host address for the HTTP server (used for binding the server)
 SERVER_HOST=localhost
-# Port number for the HTTP server (also used by MCP server for generating view URLs)
+# Port number for the HTTP server (used for binding the server)
 SERVER_PORT=3000
+# Base URL for the application (used for generating view URLs)
+BASE_URL=http://localhost:3000/
 # Maximum age of pages before they expire (e.g., 1h = 1 hour, uses ms library format)
 PAGE_MAX_AGE=1h
 # Maximum number of pages that can be stored (oldest pages are removed when limit is reached)
@@ -97,8 +99,9 @@ PAGE_MAX_COUNT=1000
 
 | Option | Description | Default | Format |
 |--------|-------------|---------|--------|
-| SERVER_HOST | Host address for the HTTP server | localhost | hostname |
+| SERVER_HOST | Host address for binding the HTTP server | localhost | hostname |
 | SERVER_PORT | Port number for the HTTP server | 3000 | number |
+| BASE_URL | Base URL for generating view URLs | http://localhost:3000/ | URL |
 | PAGE_MAX_AGE | Maximum age of pages before expiration | 1h | time string (e.g., 1h, 30m, 1d) |
 | PAGE_MAX_COUNT | Maximum number of pages to keep | 1000 | number |
 
@@ -121,8 +124,8 @@ Add this to your `claude_desktop_config.json`:
         "--rm",
         "-p",
         "3000:3000",
-        "-e", "SERVER_HOST=localhost",
         "-e", "SERVER_PORT=3000",
+        "-e", "BASE_URL=http://localhost:3000/",
         "-e", "PAGE_MAX_AGE=1h",
         "-e", "PAGE_MAX_COUNT=1000",
         "yujiosaka/mcp-html-sync-server"
@@ -154,7 +157,7 @@ For quick installation, use one of the one-click install buttons below:
 
 [![Install with NPX in VS Code](https://img.shields.io/badge/VS_Code-NPM-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22mcp-html-sync-server%22%5D%2C%22env%22%3A%7B%22NODE_ENV%22%3A%22production%22%7D%7D) [![Install with NPX in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-NPM-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22mcp-html-sync-server%22%5D%2C%22env%22%3A%7B%22NODE_ENV%22%3A%22production%22%7D%7D&quality=insiders)
 
-[![Install with Docker in VS Code](https://img.shields.io/badge/VS_Code-Docker-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22-e%22%2C%22SERVER_HOST%3Dlocalhost%22%2C%22-e%22%2C%22SERVER_PORT%3D3000%22%2C%22-e%22%2C%22PAGE_MAX_AGE%3D1h%22%2C%22-e%22%2C%22PAGE_MAX_COUNT%3D1000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D) [![Install with Docker in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Docker-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22-e%22%2C%22SERVER_HOST%3Dlocalhost%22%2C%22-e%22%2C%22SERVER_PORT%3D3000%22%2C%22-e%22%2C%22PAGE_MAX_AGE%3D1h%22%2C%22-e%22%2C%22PAGE_MAX_COUNT%3D1000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D&quality=insiders)
+[![Install with Docker in VS Code](https://img.shields.io/badge/VS_Code-Docker-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22-e%22%2C%22SERVER_PORT%3D3000%22%2C%22-e%22%2C%22BASE_URL%3Dhttp%3A%2F%2Flocalhost%3A3000%2F%22%2C%22-e%22%2C%22PAGE_MAX_AGE%3D1h%22%2C%22-e%22%2C%22PAGE_MAX_COUNT%3D1000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D) [![Install with Docker in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Docker-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22-e%22%2C%22SERVER_PORT%3D3000%22%2C%22-e%22%2C%22BASE_URL%3Dhttp%3A%2F%2Flocalhost%3A3000%2F%22%2C%22-e%22%2C%22PAGE_MAX_AGE%3D1h%22%2C%22-e%22%2C%22PAGE_MAX_COUNT%3D1000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D&quality=insiders)
 
 #### Manual Installation
 
@@ -193,8 +196,8 @@ For Docker installation:
           "-i",
           "--rm",
           "-p", "3000:3000",
-          "-e", "SERVER_HOST=localhost",
           "-e", "SERVER_PORT=3000",
+          "-e", "BASE_URL=http://localhost:3000/",
           "-e", "PAGE_MAX_AGE=1h",
           "-e", "PAGE_MAX_COUNT=1000",
           "yujiosaka/mcp-html-sync-server"
@@ -222,7 +225,7 @@ Creates a new HTML page with the specified content.
   "properties": {
     "body": {
       "type": "string",
-      "description": "HTML content for the page body"
+      "description": "HTML content for the page body (only the inner content)"
     },
     "scripts": {
       "type": "array",
@@ -284,8 +287,25 @@ Creates a new HTML page with the specified content.
 **Example Response**:
 ```json
 {
-  "url": "http://localhost:3000/abc123",
-  "id": "abc123"
+  "content": [
+    {
+      "type": "text",
+      "text": "Page created successfully! A URL is provided below to view your page."
+    },
+    {
+      "type": "text",
+      "text": "View your HTML page in URL: http://localhost:3000/abc123"
+    },
+    {
+      "type": "text",
+      "text": "ID: abc123\nExpires at: 2023-04-15T12:34:56.789Z\n\nUse this ID for future updates before expiration."
+    }
+  ],
+  "metadata": {
+    "id": "abc123",
+    "url": "http://localhost:3000/abc123",
+    "expires_at": "2023-04-15T12:34:56.789Z"
+  }
 }
 ```
 
@@ -306,7 +326,7 @@ Updates an existing page with new content. All connected clients will see the up
     },
     "body": {
       "type": "string",
-      "description": "New HTML content for the page body"
+      "description": "New HTML content for the page body (only the inner content)"
     }
   },
   "required": ["id", "body"]
@@ -327,7 +347,25 @@ Updates an existing page with new content. All connected clients will see the up
 **Example Response**:
 ```json
 {
-  "success": true
+  "content": [
+    {
+      "type": "text",
+      "text": "Page updated successfully! A URL is provided below to view your updated page."
+    },
+    {
+      "type": "text",
+      "text": "View your HTML page in URL: http://localhost:3000/abc123"
+    },
+    {
+      "type": "text",
+      "text": "ID: abc123\nExpires at: 2023-04-15T12:34:56.789Z\n\nUse this ID for future updates before expiration."
+    }
+  ],
+  "metadata": {
+    "id": "abc123",
+    "url": "http://localhost:3000/abc123",
+    "expires_at": "2023-04-15T12:34:56.789Z"
+  }
 }
 ```
 
@@ -426,7 +464,25 @@ Adds JavaScript scripts to an existing page. All connected clients will receive 
 **Example Response**:
 ```json
 {
-  "success": true
+  "content": [
+    {
+      "type": "text",
+      "text": "Scripts added successfully! A URL is provided below to view your page."
+    },
+    {
+      "type": "text",
+      "text": "View your HTML page in URL: http://localhost:3000/abc123"
+    },
+    {
+      "type": "text",
+      "text": "ID: abc123\nExpires at: 2023-04-15T12:34:56.789Z\n\nUse this ID for future updates before expiration."
+    }
+  ],
+  "metadata": {
+    "id": "abc123",
+    "url": "http://localhost:3000/abc123",
+    "expires_at": "2023-04-15T12:34:56.789Z"
+  }
 }
 ```
 
@@ -483,9 +539,22 @@ Adds CSS stylesheets to an existing page. All connected clients will receive the
   "content": [
     {
       "type": "text",
-      "text": "Stylesheets added successfully!\nID: abc123\nURL: http://localhost:3000/abc123\nExpires: 2023-04-15T12:34:56.789Z"
+      "text": "Stylesheets added successfully! A URL is provided below to view your page."
+    },
+    {
+      "type": "text",
+      "text": "View your HTML page in URL: http://localhost:3000/abc123"
+    },
+    {
+      "type": "text",
+      "text": "ID: abc123\nExpires at: 2023-04-15T12:34:56.789Z\n\nUse this ID for future updates before expiration."
     }
-  ]
+  ],
+  "metadata": {
+    "id": "abc123",
+    "url": "http://localhost:3000/abc123",
+    "expires_at": "2023-04-15T12:34:56.789Z"
+  }
 }
 ```
 

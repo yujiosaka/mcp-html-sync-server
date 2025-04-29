@@ -20,6 +20,7 @@ const envSchema = z.object({
       }
       return port;
     }),
+  BASE_URL: z.string().default("http://localhost:3000/"),
   PAGE_MAX_AGE: z
     .string()
     .default("5m")

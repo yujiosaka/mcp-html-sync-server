@@ -11,14 +11,27 @@ export default async function createPageHandler(request: CallToolRequest) {
   try {
     const id = nanoid(10);
     const page = pageManager.createPage(id, body, scripts, stylesheets);
-    const viewUrl = `http://${env.SERVER_HOST}:${env.SERVER_PORT}/${id}`;
+    const url = `${env.BASE_URL}${id}`;
     return {
       content: [
         {
           type: "text",
-          text: `Page created successfully!\nID: ${id}\nURL: ${viewUrl}\nExpires: ${page.expiresAt.toISOString()}`,
+          text: "Page created successfully! A URL is provided below to view your page.",
+        },
+        {
+          type: "text",
+          text: `View your HTML page in URL: ${url}`,
+        },
+        {
+          type: "text",
+          text: `ID: ${id}\nExpires at: ${page.expiresAt.toISOString()}\n\nUse this ID for future updates before expiration.`,
         },
       ],
+      metadata: {
+        id: id,
+        url,
+        expires_at: page.expiresAt.toISOString(),
+      },
     };
   } catch (err) {
     return {

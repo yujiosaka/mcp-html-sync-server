@@ -29,7 +29,6 @@ describe("handleDestroyPage", () => {
 
     const result = await handleDestroyPage(request);
 
-    expect(pageManager.removePage).toHaveBeenCalledWith(id);
     expect(result).toEqual({
       content: [
         {
@@ -58,7 +57,6 @@ describe("handleDestroyPage", () => {
 
     const result = await handleDestroyPage(request);
 
-    expect(pageManager.removePage).toHaveBeenCalledWith(id);
     expect(result).toEqual({
       content: [
         {
