@@ -37,7 +37,7 @@ WORKDIR /app
 COPY --from=development /app/dist ./dist
 COPY --from=development /app/public ./public
 COPY --from=development /app/templates ./templates
-COPY --from=development /app/package.json /app/bun.lock /app/.env ./
+COPY --from=development /app/package.json /app/bun.lock ./
 
 # Install dependencies
 RUN bun install --production --ignore-scripts

@@ -40,6 +40,21 @@ docker pull yujiosaka/mcp-html-sync-server
 docker run -p 3000:3000 yujiosaka/mcp-html-sync-server
 ```
 
+#### Docker Environment Variables
+
+Instead of using an `.env` file, you can pass environment variables directly to the Docker container at runtime:
+
+```bash
+docker run -p 3000:3000 \
+  -e SERVER_HOST=localhost \
+  -e SERVER_PORT=3000 \
+  -e PAGE_MAX_AGE=1h \
+  -e PAGE_MAX_COUNT=1000 \
+  yujiosaka/mcp-html-sync-server
+```
+
+This approach is recommended for production deployments as it allows you to configure the server without modifying the container image.
+
 ### Using NPX
 
 ```bash
@@ -72,10 +87,10 @@ Edit the `.env` file to configure the server:
 SERVER_HOST=localhost
 # Port number for the HTTP server (also used by MCP server for generating view URLs)
 SERVER_PORT=3000
-# Maximum age of pages before they expire (e.g., 5m = 5 minutes, uses ms library format)
-PAGE_MAX_AGE=5m
+# Maximum age of pages before they expire (e.g., 1h = 1 hour, uses ms library format)
+PAGE_MAX_AGE=1h
 # Maximum number of pages that can be stored (oldest pages are removed when limit is reached)
-PAGE_MAX_COUNT=100
+PAGE_MAX_COUNT=1000
 ```
 
 ### Configuration Options
@@ -84,8 +99,8 @@ PAGE_MAX_COUNT=100
 |--------|-------------|---------|--------|
 | SERVER_HOST | Host address for the HTTP server | localhost | hostname |
 | SERVER_PORT | Port number for the HTTP server | 3000 | number |
-| PAGE_MAX_AGE | Maximum age of pages before expiration | 5m | time string (e.g., 1h, 30m, 1d) |
-| PAGE_MAX_COUNT | Maximum number of pages to keep | 100 | number |
+| PAGE_MAX_AGE | Maximum age of pages before expiration | 1h | time string (e.g., 1h, 30m, 1d) |
+| PAGE_MAX_COUNT | Maximum number of pages to keep | 1000 | number |
 
 ## Usage with MCP
 
@@ -106,6 +121,10 @@ Add this to your `claude_desktop_config.json`:
         "--rm",
         "-p",
         "3000:3000",
+        "-e", "SERVER_HOST=localhost",
+        "-e", "SERVER_PORT=3000",
+        "-e", "PAGE_MAX_AGE=1h",
+        "-e", "PAGE_MAX_COUNT=1000",
         "yujiosaka/mcp-html-sync-server"
       ]
     }
@@ -135,7 +154,7 @@ For quick installation, use one of the one-click install buttons below:
 
 [![Install with NPX in VS Code](https://img.shields.io/badge/VS_Code-NPM-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22mcp-html-sync-server%22%5D%2C%22env%22%3A%7B%22NODE_ENV%22%3A%22production%22%7D%7D) [![Install with NPX in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-NPM-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22mcp-html-sync-server%22%5D%2C%22env%22%3A%7B%22NODE_ENV%22%3A%22production%22%7D%7D&quality=insiders)
 
-[![Install with Docker in VS Code](https://img.shields.io/badge/VS_Code-Docker-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D) [![Install with Docker in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Docker-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D&quality=insiders)
+[![Install with Docker in VS Code](https://img.shields.io/badge/VS_Code-Docker-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22-e%22%2C%22SERVER_HOST%3Dlocalhost%22%2C%22-e%22%2C%22SERVER_PORT%3D3000%22%2C%22-e%22%2C%22PAGE_MAX_AGE%3D1h%22%2C%22-e%22%2C%22PAGE_MAX_COUNT%3D1000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D) [![Install with Docker in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Docker-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=html-sync-server&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22-p%22%2C%223000%3A3000%22%2C%22-e%22%2C%22SERVER_HOST%3Dlocalhost%22%2C%22-e%22%2C%22SERVER_PORT%3D3000%22%2C%22-e%22%2C%22PAGE_MAX_AGE%3D1h%22%2C%22-e%22%2C%22PAGE_MAX_COUNT%3D1000%22%2C%22yujiosaka%2Fmcp-html-sync-server%22%5D%7D&quality=insiders)
 
 #### Manual Installation
 
@@ -169,7 +188,17 @@ For Docker installation:
     "servers": {
       "html-sync-server": {
         "command": "docker",
-        "args": ["run", "-i", "--rm", "-p", "3000:3000", "yujiosaka/mcp-html-sync-server"]
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "-p", "3000:3000",
+          "-e", "SERVER_HOST=localhost",
+          "-e", "SERVER_PORT=3000",
+          "-e", "PAGE_MAX_AGE=1h",
+          "-e", "PAGE_MAX_COUNT=1000",
+          "yujiosaka/mcp-html-sync-server"
+        ]
       }
     }
   }
