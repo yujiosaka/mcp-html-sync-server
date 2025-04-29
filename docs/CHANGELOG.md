@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.6...v1.0.7) (2025-04-29)
+
+
+### Bug Fixes
+
+* improve schema to avoid confusion ([239bb59](https://github.com/yujiosaka/mcp-html-sync-server/commit/239bb59b171a42e0867fe1517dcd410dac85521a))
+
 ## [1.0.6](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.5...v1.0.6) (2025-04-29)
 
 
