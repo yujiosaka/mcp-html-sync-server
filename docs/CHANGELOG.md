@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.4...v1.0.5) (2025-04-29)
+
+
+### Bug Fixes
+
+* stop relying on .env on docker build ([0c298ef](https://github.com/yujiosaka/mcp-html-sync-server/commit/0c298ef8187dcf7f832d3eed3fb945477437b5e7))
+
 ## [1.0.4](https://github.com/yujiosaka/mcp-html-sync-server/compare/v1.0.3...v1.0.4) (2025-04-29)
 
 
