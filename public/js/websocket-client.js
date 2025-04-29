@@ -26,7 +26,7 @@
         console.error("Error parsing message:", err);
       }
 
-      if (data.type === "update") {
+      if (data.type === "updated") {
         document.body.innerHTML = data.body;
       } else if (data.type === "scripts_added") {
         updateScripts(data);

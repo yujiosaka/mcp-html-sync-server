@@ -22,13 +22,6 @@ export default async function updatePageHandler(request: CallToolRequest) {
       };
     }
 
-    for (const connection of page.connections) {
-      try {
-        connection.send(JSON.stringify({ type: "update", body }));
-      } catch (err) {
-        logger.error({ err }, "Error sending update to client");
-      }
-    }
     const url = `${env.BASE_URL}${id}`;
     return {
       content: [
